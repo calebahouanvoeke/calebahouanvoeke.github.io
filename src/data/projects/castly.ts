@@ -7,6 +7,7 @@ const p: Project = {
   period: '2026',
   stack: ['Laravel', 'PHP', 'MySQL', 'Mistral API', 'Figma', 'alwaysdata'],
   live: 'https://castly.alwaysdata.net',
+  video: { fr: '/video/castly-fr.mp4', en: '/video/castly-en.mp4' },
   images: [{ src: '/img/castly-home.png', alt: { fr: 'Écran de connexion de Castly en production', en: 'Castly sign-in screen in production' } }],
   fr: {
     title: 'Castly',

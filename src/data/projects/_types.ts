@@ -22,7 +22,7 @@ export type Project = {
   stack: string[];
   confidential?: boolean;
   live?: string;   // lien vers la version en ligne
-  video?: string;  // chemin d'une vidéo dans public/ (ex. /video/castly.mp4) ou lien YouTube embed
+  video?: string | { fr: string; en: string };  // vidéo dans public/ (ex. /video/castly.mp4), une par langue possible, ou lien YouTube embed
   repo?: string;
   images?: { src: string; alt: { fr: string; en: string } }[];
   fr: ProjectText;

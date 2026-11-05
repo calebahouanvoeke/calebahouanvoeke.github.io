@@ -11,7 +11,8 @@ const c = p[lang];
 const i = projects.findIndex((x) => x.slug === p.slug);
 const next = projects[(i + 1) % projects.length];
 const home = lang === 'fr' ? u('/#work') : u('/en/#work');
-const isEmbed = p.video?.startsWith('http');
+const video = typeof p.video === 'string' ? p.video : p.video?.[lang];
+const isEmbed = video?.startsWith('http');
 const hasTour = p.live || p.video || p.images?.length || p.repo;
 ---
 <article class="wrap case">
@@ -44,14 +45,14 @@ const hasTour = p.live || p.video || p.images?.length || p.repo;
         {p.live && <a class="pill light" href={p.live} target="_blank" rel="noopener">{t.live} ↗</a>}
         {p.repo && <a class="pill" href={p.repo} target="_blank" rel="noopener">{t.repo} ↗</a>}
       </div>
-      {p.video && (
+      {video && (
         <figure class="frame">
           {isEmbed
-            ? <iframe src={p.video} title={`${t.video} ${c.title}`} loading="lazy" allowfullscreen></iframe>
-            : <video src={u(p.video)} controls preload="metadata" playsinline></video>}
+            ? <iframe src={video} title={`${t.video} ${c.title}`} loading="lazy" allowfullscreen></iframe>
+            : <video src={u(video)} controls muted playsinline preload="metadata" poster={p.images?.[0] && !p.confidential ? u(p.images[0].src) : undefined}></video>}
         </figure>
       )}
-      {p.images?.map((img) => (
+      {!video && p.images?.map((img) => (
         <figure class={`frame${p.confidential ? ' blur' : ''}`}>
           <div class="chrome" aria-hidden="true"><span></span><span></span><span></span></div>
           <img src={u(img.src)} alt={img.alt[lang]} loading="lazy" />

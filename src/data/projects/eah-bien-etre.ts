@@ -7,6 +7,7 @@ const p: Project = {
   period: '2026',
   stack: ['WordPress', 'X', 'Facebook', 'Editorial', 'Video'],
   live: 'https://eah-bienetre.org/',
+  video: { fr: '/video/eah-fr.mp4', en: '/video/eah-en.mp4' },
   fr: {
     title: 'EAH Bien-être',
     tagline: 'Site web et présence digitale d’une ONG.',
