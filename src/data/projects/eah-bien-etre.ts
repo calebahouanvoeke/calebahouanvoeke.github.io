@@ -5,7 +5,7 @@ const p: Project = {
   order: 4,
   period: '2026',
   stack: ['WordPress', 'X', 'Facebook', 'Editorial', 'Video'],
-  // live: 'https://...', // à compléter avec l’adresse du site EAH
+  live: 'https://eah-bienetre.org/',
   fr: {
     title: 'EAH Bien-être',
     tagline: 'Site web et présence digitale d’une ONG.',
