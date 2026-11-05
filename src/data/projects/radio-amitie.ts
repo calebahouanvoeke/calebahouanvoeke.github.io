@@ -3,6 +3,7 @@ import type { Project } from './_types';
 const p: Project = {
   slug: 'radio-amitie',
   order: 3,
+  domains: ['mobile'],
   period: '2026',
   stack: ['React Native', 'Expo', 'TypeScript', 'expo-av', 'Icecast', 'Expo Router', 'Reanimated', 'EAS Build', 'Figma'],
   fr: {

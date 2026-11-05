@@ -3,6 +3,7 @@ import type { Project } from './_types';
 const p: Project = {
   slug: 'eah-bien-etre',
   order: 4,
+  domains: ['web'],
   period: '2026',
   stack: ['WordPress', 'X', 'Facebook', 'Editorial', 'Video'],
   live: 'https://eah-bienetre.org/',

@@ -3,6 +3,7 @@ import type { Project } from './_types';
 const p: Project = {
   slug: 'jarvis',
   order: 7,
+  domains: ['mobile', 'ai'],
   period: '2026',
   stack: ['Flutter', 'Dart', 'Android', 'Speech recognition'],
   fr: {

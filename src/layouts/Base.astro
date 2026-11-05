@@ -1,5 +1,5 @@
 ---
-// Gabarit commun : en-tête, pied de page, métadonnées SEO et bascule de langue
+// Gabarit commun : en-tête, menu mobile, pied de page, métadonnées SEO et bascule de langue
 import '../styles/global.css';
 import { ui, profile, type Lang } from '../data/site';
 import { u } from '../lib/url';
@@ -11,6 +11,12 @@ const pageTitle = title ? `${title} · Caleb Ahouanvoeke` : t.htmlTitle;
 const desc = description ?? t.description;
 const homePath = lang === 'fr' ? u('/') : u('/en/');
 const anchor = (id: string) => (home ? `#${id}` : `${homePath}#${id}`);
+const links = [
+  { id: 'work', label: t.nav.work },
+  { id: 'ai', label: t.nav.ai },
+  { id: 'path', label: t.nav.path },
+  { id: 'contact', label: t.nav.contact },
+];
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const altUrl = new URL(alt, Astro.site);
 ---
@@ -27,38 +33,68 @@ const altUrl = new URL(alt, Astro.site);
   <meta property="og:description" content={desc} />
   <meta property="og:type" content="website" />
   <meta property="og:url" content={canonical} />
-  <meta name="theme-color" content="#f4f1ea" />
+  <meta name="theme-color" content="#ffffff" />
   <link rel="icon" href={u('/favicon.svg')} type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
 </head>
 <body>
   <a class="skip" href="#main">{lang === 'fr' ? 'Aller au contenu' : 'Skip to content'}</a>
   <header class="top">
     <div class="wrap">
-      <a class="brand" href={homePath}>Caleb <b>Ahouanvoeke</b></a>
+      <a class="brand" href={homePath}><span class="mark" aria-hidden="true"></span>caleb.</a>
       <nav class="nav" aria-label="Navigation">
-        <a href={anchor('work')}>{t.nav.work}</a>
-        <a href={anchor('ai')}>{t.nav.ai}</a>
-        <a href={anchor('path')}>{t.nav.path}</a>
-        <a href={anchor('contact')}>{t.nav.contact}</a>
-        <a class="lang" href={alt} hreflang={lang === 'fr' ? 'en' : 'fr'} title={t.switchTitle}>{t.switchLabel}</a>
+        {links.map((l) => <a href={anchor(l.id)}>{l.label}</a>)}
       </nav>
+      <div class="top-actions">
+        <a class="pill round" href={alt} hreflang={lang === 'fr' ? 'en' : 'fr'} title={t.switchTitle}>{t.switchLabel}</a>
+        <a class="pill light cv-top" href={u(profile.cv[lang])} download>{t.cvBtn}</a>
+        <button class="pill round burger" aria-label="Menu" aria-expanded="false" aria-controls="menu" data-menu-open>
+          <svg width="16" height="12" viewBox="0 0 16 12" aria-hidden="true"><path d="M0 1h16M0 6h16M0 11h16" stroke="currentColor" stroke-width="1.6"/></svg>
+        </button>
+      </div>
     </div>
   </header>
+
+  <div class="menu" id="menu" aria-hidden="true">
+    <div class="menu-head">
+      <span class="brand"><span class="mark" aria-hidden="true"></span>caleb.</span>
+      <button class="pill round" aria-label={lang === 'fr' ? 'Fermer' : 'Close'} data-menu-close>✕</button>
+    </div>
+    <nav aria-label="Menu">
+      {links.map((l) => <a href={anchor(l.id)} data-menu-link>{l.label}</a>)}
+    </nav>
+    <a class="pill accent" href={u(profile.cv[lang])} download>{t.cvBtn} ↓</a>
+  </div>
+
   <main id="main"><slot /></main>
+
   <footer class="foot">
     <div class="wrap mono muted">
       <span>{t.footer}</span>
       <span><a href={profile.github}>GitHub</a> · <a href={profile.linkedin}>LinkedIn</a> · © {new Date().getFullYear()}</span>
     </div>
   </footer>
+
   <script>
+    // Menu mobile
+    const menu = document.getElementById('menu')!;
+    const openBtn = document.querySelector<HTMLButtonElement>('[data-menu-open]')!;
+    const setMenu = (open: boolean) => {
+      menu.classList.toggle('open', open);
+      menu.setAttribute('aria-hidden', String(!open));
+      openBtn.setAttribute('aria-expanded', String(open));
+      document.body.style.overflow = open ? 'hidden' : '';
+    };
+    openBtn.addEventListener('click', () => setMenu(true));
+    document.querySelectorAll('[data-menu-close],[data-menu-link]').forEach((el) => el.addEventListener('click', () => setMenu(false)));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
+
     // Apparition douce des blocs au défilement
     const io = new IntersectionObserver((entries) => {
       entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
-    }, { rootMargin: '0px 0px -8% 0px' });
+    }, { rootMargin: '0px 0px -6% 0px' });
     document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
   </script>
 </body>

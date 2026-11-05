@@ -3,6 +3,7 @@ import type { Project } from './_types';
 const p: Project = {
   slug: 'beninlifestyle',
   order: 6,
+  domains: ['game', 'ai'],
   period: '2026',
   stack: ['Godot 4', 'GDScript', 'OpenStreetMap', 'AI agents'],
   fr: {

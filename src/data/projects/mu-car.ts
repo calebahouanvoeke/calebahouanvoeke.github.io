@@ -3,6 +3,7 @@ import type { Project } from './_types';
 const p: Project = {
   slug: 'mu-car',
   order: 2,
+  domains: ['web', 'ai'],
   period: '2026',
   confidential: true,
   stack: ['Vue 3', 'TypeScript', 'Leaflet', 'OSRM', 'Node.js', 'Express', 'Socket.IO', 'FastAPI', 'MongoDB', 'Docker Compose', 'nginx', 'Mistral API'],

@@ -3,6 +3,7 @@ import type { Project } from './_types';
 const p: Project = {
   slug: 'castly',
   order: 1,
+  domains: ['web', 'ai'],
   period: '2026',
   stack: ['Laravel', 'PHP', 'MySQL', 'Mistral API', 'Figma', 'alwaysdata'],
   live: 'https://castly.alwaysdata.net',

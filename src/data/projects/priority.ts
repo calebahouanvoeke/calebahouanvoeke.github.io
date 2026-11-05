@@ -3,6 +3,7 @@ import type { Project } from './_types';
 const p: Project = {
   slug: 'priority',
   order: 8,
+  domains: ['game'],
   period: '2026',
   stack: ['Python', 'Ren’Py', 'Narrative design'],
   fr: {

@@ -18,6 +18,7 @@ export type Project = {
   slug: string;
   order: number;
   period: string;
+  domains: ('web' | 'mobile' | 'ai' | 'game')[];
   stack: string[];
   confidential?: boolean;
   live?: string;   // lien vers la version en ligne

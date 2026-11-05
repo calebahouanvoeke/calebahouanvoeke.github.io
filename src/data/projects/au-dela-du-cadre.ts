@@ -3,6 +3,7 @@ import type { Project } from './_types';
 const p: Project = {
   slug: 'au-dela-du-cadre',
   order: 5,
+  domains: ['game'],
   period: '2026',
   stack: ['Unity', 'C#', 'VR', '3ds Max', 'Text-to-speech'],
   fr: {
