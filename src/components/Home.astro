@@ -1,0 +1,234 @@
+---
+// Page d'accueil, partagée entre la version française et anglaise
+import { ui, profile, route, aiMethod, experience, education, skills, alsoBuilt, type Lang } from '../data/site';
+import { projects } from '../data/projects';
+import { u, caseUrl } from '../lib/url';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = ui[lang];
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+<section class="hero wrap">
+  <p class="mono kicker reveal">{t.kicker}</p>
+  <h1 class="reveal">Caleb<br /><em>Ahouanvoeke</em></h1>
+  <div class="hero-grid">
+    <p class="lead reveal">{t.hero}</p>
+    <dl class="card reveal">
+      <div><dt class="mono">{t.statusLabel}</dt><dd><span class="dot" aria-hidden="true"></span>{t.status}</dd></div>
+      <div><dt class="mono">{t.based}</dt><dd>{t.basedValue}</dd></div>
+      <div><dt class="mono">{t.langs}</dt><dd>{t.langsValue}</dd></div>
+      <div class="actions">
+        <a class="btn solid" href={u(profile.cv[lang])} download>{t.cvBtn} <span aria-hidden="true">↓</span></a>
+        <a class="btn" href="#work">{t.workBtn}</a>
+      </div>
+    </dl>
+  </div>
+
+  <div class="route reveal" aria-label={t.routeTitle}>
+    <p class="mono muted">{t.routeTitle}</p>
+    <ol>
+      {route.map((s, i) => (
+        <li class={i === 2 ? 'cross' : ''}>
+          <span class="mono yr">{s.year}</span>
+          <span class="place">{s.place}</span>
+          <span class="note muted">{s.note[lang]}</span>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<section id="work" class="sec wrap">
+  <div class="sec-head reveal">
+    <span class="mono">01 / {t.nav.work}</span>
+    <h2>{t.workTitle}</h2>
+    <p>{t.workIntro}</p>
+  </div>
+  <ol class="index">
+    {projects.map((p, i) => {
+      const c = p[lang];
+      return (
+        <li class="reveal">
+          <a href={caseUrl(lang, p.slug)} class="row">
+            <span class="mono num">{pad(i + 1)}</span>
+            <span class="what">
+              <span class="name">{c.title}{p.confidential && <span class="mono stamp">{t.case.confidential}</span>}</span>
+              <span class="tag muted">{c.tagline}</span>
+            </span>
+            <ul class="tags">{p.stack.slice(0, 4).map((s) => <li>{s}</li>)}</ul>
+            <span class="mono meta muted">{c.status}</span>
+            <span class="arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+      );
+    })}
+  </ol>
+
+  <div class="also reveal">
+    <p class="mono muted">{t.alsoTitle}</p>
+    <ul>
+      {alsoBuilt.map((a) => (
+        <li><strong>{a.name}</strong> <span class="mono muted">{a.stack}</span><br /><span class="muted">{a.text[lang]}</span></li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<section id="ai" class="sec ai">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="mono">02 / {t.nav.ai}</span>
+      <h2>{t.aiTitle}</h2>
+      <p>{t.aiIntro}</p>
+    </div>
+    <ol class="protocol">
+      {aiMethod.map((m, i) => (
+        <li class="reveal">
+          <span class="mono step">{pad(i + 1)}</span>
+          <h3>{m.title[lang]}</h3>
+          <p>{m.text[lang]}</p>
+          <p class="proof"><span class="mono">{t.proof}</span>{m.proof[lang]}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<section id="path" class="sec wrap">
+  <div class="sec-head reveal">
+    <span class="mono">03 / {t.nav.path}</span>
+    <h2>{t.pathTitle}</h2>
+  </div>
+  <div class="path">
+    <ol class="xp">
+      {experience.map((x) => (
+        <li class="reveal">
+          <p class="mono muted">{x.period[lang]} · {x.place[lang]}</p>
+          <h3>{x.role[lang]}</h3>
+          <p class="org">{x.org}</p>
+          <ul>{x.points.map((pt) => <li>{pt[lang]}</li>)}</ul>
+        </li>
+      ))}
+    </ol>
+    <div>
+      <ol class="edu reveal">
+        {education.map((e) => (
+          <li><p class="mono muted">{e.period}</p><p>{e.title[lang]}</p><p class="muted">{e.school}</p></li>
+        ))}
+      </ol>
+      <h3 class="skills-title reveal">{t.skillsTitle}</h3>
+      <dl class="skills reveal">
+        {skills.map((s) => (<div><dt class="mono">{s.group[lang]}</dt><dd>{s.items}</dd></div>))}
+      </dl>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="sec wrap">
+  <div class="sec-head reveal">
+    <span class="mono">04 / {t.nav.contact}</span>
+    <h2>{t.contactTitle}</h2>
+    <p>{t.contactIntro}</p>
+  </div>
+  <div class="contact reveal">
+    <a class="mail" href={`mailto:${profile.email}`}>{profile.email}</a>
+    <div class="links">
+      <a class="btn" href={profile.linkedin}>LinkedIn ↗</a>
+      <a class="btn" href={profile.github}>GitHub ↗</a>
+      <a class="btn" href={`tel:${profile.phone.replace(/\s/g, '')}`}>{profile.phone}</a>
+      <a class="btn solid" href={u(profile.cv[lang])} download>{t.cvBtn} ↓</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero { padding-top: 84px; }
+  .kicker { color: var(--cobalt); margin: 0 0 22px; }
+  h1 { font: 300 clamp(64px, 11vw, 168px)/.88 var(--serif); letter-spacing: -.035em; margin: 0; }
+  h1 em { font-style: italic; font-weight: 300; color: var(--cobalt); }
+  .hero-grid { display: grid; grid-template-columns: 1.25fr 1fr; gap: 56px; margin-top: 52px; align-items: start; }
+  .lead { font: 400 clamp(22px, 2.3vw, 30px)/1.32 var(--serif); margin: 0; max-width: 620px; }
+  .card { margin: 0; border: 1px solid var(--ink); background: var(--paper-2); }
+  .card > div { padding: 14px 18px; border-bottom: 1px solid var(--rule); }
+  .card dt { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+  .card dd { margin: 4px 0 0; }
+  .card .actions { display: flex; flex-wrap: wrap; gap: 10px; border: 0; padding: 18px; }
+  .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #1f8a4c; margin-right: 8px; box-shadow: 0 0 0 4px #1f8a4c22; }
+
+  .route { margin-top: 80px; }
+  .route ol { list-style: none; padding: 0; margin: 14px 0 0; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 2px solid var(--ink); }
+  .route li { position: relative; padding: 18px 16px 0 0; display: flex; flex-direction: column; }
+  .route li::before { content: ''; position: absolute; top: -7px; left: 0; width: 12px; height: 12px; background: var(--paper); border: 2px solid var(--ink); border-radius: 50%; }
+  .route li.cross::after { content: 'Bénin → France'; position: absolute; top: -30px; left: -110px; font: 12px var(--mono); color: var(--clay); }
+  .route .yr { color: var(--cobalt); }
+  .route .place { font: 400 24px/1.2 var(--serif); }
+  .route .note { font-size: 14px; }
+
+  .index { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
+  .index li { border-bottom: 1px solid var(--rule); }
+  .row { display: grid; grid-template-columns: 56px 1.5fr 1.1fr 170px 30px; gap: 22px; align-items: center; padding: 24px 0; text-decoration: none; transition: padding .25s, background .25s; }
+  .row:hover { background: var(--paper-2); padding-left: 14px; padding-right: 14px; }
+  .num { color: var(--cobalt); }
+  .what { display: flex; flex-direction: column; gap: 4px; }
+  .name { font: 400 30px/1.1 var(--serif); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .stamp { font-size: 11px; color: var(--clay); border: 1px solid var(--clay); padding: 2px 7px; text-transform: uppercase; letter-spacing: .08em; }
+  .tag { font-size: 15px; }
+  .meta { font-size: 12px; }
+  .arrow { font-size: 22px; transition: transform .25s; }
+  .row:hover .arrow { transform: translateX(6px); color: var(--cobalt); }
+
+  .also { margin-top: 44px; }
+  .also ul { list-style: none; padding: 0; margin: 14px 0 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+  .also li { font-size: 15px; }
+
+  .ai { background: var(--ink); color: var(--paper); margin-top: 110px; padding-bottom: 110px; }
+  .ai .sec-head { border-color: var(--paper); }
+  .ai .sec-head .mono { color: #8fa2ff; }
+  .ai .sec-head p { color: #b9bcc2; }
+  .protocol { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; border-top: 1px solid #3a3d44; }
+  .protocol li { padding: 26px 22px 0 0; border-right: 1px solid #3a3d44; margin-right: 22px; display: flex; flex-direction: column; }
+  .protocol li:last-child { border-right: 0; margin-right: 0; }
+  .step { color: #8fa2ff; }
+  .protocol h3 { font: 400 24px/1.15 var(--serif); margin: 12px 0 10px; }
+  .protocol p { font-size: 15px; color: #c9ccd2; margin: 0 0 16px; }
+  .proof { margin-top: auto !important; padding-top: 14px; border-top: 1px dashed #4a4d55; color: var(--paper) !important; }
+  .proof .mono { display: block; color: #8fa2ff; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 4px; }
+
+  .path { display: grid; grid-template-columns: 1.2fr 1fr; gap: 64px; }
+  .xp, .edu { list-style: none; padding: 0; margin: 0; }
+  .xp > li { padding-bottom: 32px; margin-bottom: 32px; border-bottom: 1px solid var(--rule); }
+  .xp p { margin: 0; }
+  .xp h3 { font: 400 26px/1.2 var(--serif); margin: 6px 0 2px; }
+  .org { color: var(--cobalt); }
+  .xp ul { margin: 12px 0 0; padding-left: 18px; color: var(--muted); }
+  .edu li { padding: 0 0 18px; margin-bottom: 18px; border-bottom: 1px solid var(--rule); }
+  .edu p { margin: 0; }
+  .skills-title { font: 400 26px var(--serif); margin: 40px 0 14px; }
+  .skills { margin: 0; }
+  .skills div { display: grid; grid-template-columns: 150px 1fr; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--rule); }
+  .skills dt { color: var(--cobalt); }
+  .skills dd { margin: 0; font-size: 15px; }
+
+  .contact { display: flex; flex-direction: column; gap: 28px; }
+  .mail { font: 300 clamp(28px, 5vw, 64px)/1.1 var(--serif); text-decoration-thickness: 1px; text-underline-offset: 8px; word-break: break-all; }
+  .mail:hover { color: var(--cobalt); }
+  .links { display: flex; flex-wrap: wrap; gap: 10px; }
+
+  @media (max-width: 1000px) {
+    .protocol { grid-template-columns: 1fr 1fr; }
+    .protocol li { border-right: 0; margin-right: 0; padding-bottom: 26px; border-bottom: 1px solid #3a3d44; }
+    .row { grid-template-columns: 44px 1fr 30px; }
+    .row .tags, .row .meta { grid-column: 2; }
+    .row .arrow { grid-row: 1; grid-column: 3; }
+  }
+  @media (max-width: 760px) {
+    .hero { padding-top: 48px; }
+    .hero-grid, .path { grid-template-columns: 1fr; gap: 36px; }
+    .route ol { grid-template-columns: 1fr 1fr; row-gap: 28px; }
+    .route li.cross::after { display: none; }
+    .also ul, .protocol { grid-template-columns: 1fr; }
+    .skills div { grid-template-columns: 1fr; gap: 2px; }
+    .name { font-size: 25px; }
+  }
+</style>

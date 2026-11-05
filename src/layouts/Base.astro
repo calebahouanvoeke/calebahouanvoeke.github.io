@@ -1,0 +1,65 @@
+---
+// Gabarit commun : en-tête, pied de page, métadonnées SEO et bascule de langue
+import '../styles/global.css';
+import { ui, profile, type Lang } from '../data/site';
+import { u } from '../lib/url';
+
+interface Props { lang: Lang; title?: string; description?: string; alt: string; home?: boolean }
+const { lang, title, description, alt, home = false } = Astro.props;
+const t = ui[lang];
+const pageTitle = title ? `${title} · Caleb Ahouanvoeke` : t.htmlTitle;
+const desc = description ?? t.description;
+const homePath = lang === 'fr' ? u('/') : u('/en/');
+const anchor = (id: string) => (home ? `#${id}` : `${homePath}#${id}`);
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const altUrl = new URL(alt, Astro.site);
+---
+<!doctype html>
+<html lang={lang}>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{pageTitle}</title>
+  <meta name="description" content={desc} />
+  <link rel="canonical" href={canonical} />
+  <link rel="alternate" hreflang={lang === 'fr' ? 'en' : 'fr'} href={altUrl} />
+  <meta property="og:title" content={pageTitle} />
+  <meta property="og:description" content={desc} />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={canonical} />
+  <meta name="theme-color" content="#f4f1ea" />
+  <link rel="icon" href={u('/favicon.svg')} type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <a class="skip" href="#main">{lang === 'fr' ? 'Aller au contenu' : 'Skip to content'}</a>
+  <header class="top">
+    <div class="wrap">
+      <a class="brand" href={homePath}>Caleb <b>Ahouanvoeke</b></a>
+      <nav class="nav" aria-label="Navigation">
+        <a href={anchor('work')}>{t.nav.work}</a>
+        <a href={anchor('ai')}>{t.nav.ai}</a>
+        <a href={anchor('path')}>{t.nav.path}</a>
+        <a href={anchor('contact')}>{t.nav.contact}</a>
+        <a class="lang" href={alt} hreflang={lang === 'fr' ? 'en' : 'fr'} title={t.switchTitle}>{t.switchLabel}</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main"><slot /></main>
+  <footer class="foot">
+    <div class="wrap mono muted">
+      <span>{t.footer}</span>
+      <span><a href={profile.github}>GitHub</a> · <a href={profile.linkedin}>LinkedIn</a> · © {new Date().getFullYear()}</span>
+    </div>
+  </footer>
+  <script>
+    // Apparition douce des blocs au défilement
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { rootMargin: '0px 0px -8% 0px' });
+    document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+  </script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+---
+import Base from '../../layouts/Base.astro';
+import Case from '../../components/Case.astro';
+import { projects } from '../../data/projects';
+import { caseUrl } from '../../lib/url';
+
+export function getStaticPaths() {
+  return projects.map((project) => ({ params: { slug: project.slug }, props: { project } }));
+}
+const { project } = Astro.props;
+---
+<Base lang="fr" title={project.fr.title} description={project.fr.tagline} alt={caseUrl('en', project.slug)}>
+  <Case lang="fr" project={project} />
+</Base>

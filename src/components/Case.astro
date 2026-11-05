@@ -1,0 +1,131 @@
+---
+// Étude de cas d'un projet : résumé, visite, problème, réalisations, décisions, résultat
+import { ui, type Lang } from '../data/site';
+import { projects, type Project } from '../data/projects';
+import { u, caseUrl } from '../lib/url';
+
+interface Props { lang: Lang; project: Project }
+const { lang, project: p } = Astro.props;
+const t = ui[lang].case;
+const c = p[lang];
+const i = projects.findIndex((x) => x.slug === p.slug);
+const next = projects[(i + 1) % projects.length];
+const home = lang === 'fr' ? u('/#work') : u('/en/#work');
+const isEmbed = p.video?.startsWith('http');
+const hasTour = p.live || p.video || p.images?.length || p.repo;
+---
+<article class="wrap case">
+  <a class="mono back" href={home}>← {t.back}</a>
+
+  <header class="head">
+    <p class="mono file">
+      N° {String(i + 1).padStart(2, '0')} · {p.period}
+      {p.confidential && <span class="stamp">{t.confidential}</span>}
+    </p>
+    <h1>{c.title}</h1>
+    <p class="tagline">{c.tagline}</p>
+  </header>
+
+  <dl class="facts">
+    <div><dt class="mono">{t.role}</dt><dd>{c.role}</dd></div>
+    <div><dt class="mono">{t.context}</dt><dd>{c.context}</dd></div>
+    <div><dt class="mono">{t.status}</dt><dd>{c.status}</dd></div>
+    <div class="wide"><dt class="mono">{t.stack}</dt><dd><ul class="tags">{p.stack.map((s) => <li>{s}</li>)}</ul></dd></div>
+  </dl>
+
+  {p.confidential && (
+    <aside class="conf"><strong class="mono">{t.confidential}</strong><p>{t.confidentialText}</p></aside>
+  )}
+
+  {hasTour && (
+    <section class="tour">
+      <h2 class="mono label">{t.tour}</h2>
+      <div class="tour-actions">
+        {p.live && <a class="btn solid" href={p.live} target="_blank" rel="noopener">{t.live} ↗</a>}
+        {p.repo && <a class="btn" href={p.repo} target="_blank" rel="noopener">{t.repo} ↗</a>}
+      </div>
+      {p.video && (
+        <figure class="frame">
+          {isEmbed
+            ? <iframe src={p.video} title={`${t.video} ${c.title}`} loading="lazy" allowfullscreen></iframe>
+            : <video src={u(p.video)} controls preload="metadata" playsinline></video>}
+        </figure>
+      )}
+      {p.images?.map((img) => (
+        <figure class={`frame${p.confidential ? ' blur' : ''}`}>
+          <div class="chrome" aria-hidden="true"><span></span><span></span><span></span></div>
+          <img src={u(img.src)} alt={img.alt[lang]} loading="lazy" />
+        </figure>
+      ))}
+    </section>
+  )}
+
+  <div class="body">
+    <section><h2 class="mono label">{t.problem}</h2><p class="big">{c.problem}</p></section>
+    <section>
+      <h2 class="mono label">{t.built}</h2>
+      <ol class="list">{c.built.map((b) => <li>{b}</li>)}</ol>
+    </section>
+    <section>
+      <h2 class="mono label">{t.decisions}</h2>
+      <ol class="list dec">{c.decisions.map((d) => <li>{d}</li>)}</ol>
+    </section>
+    <section><h2 class="mono label">{t.outcome}</h2><p class="big">{c.outcome}</p></section>
+    {c.ai && <section class="ai-note"><h2 class="mono label">{t.ai}</h2><p>{c.ai}</p></section>}
+  </div>
+
+  <a class="next" href={caseUrl(lang, next.slug)}>
+    <span class="mono muted">{t.next}</span>
+    <span class="next-title">{next[lang].title} →</span>
+  </a>
+</article>
+
+<style>
+  .case { padding-top: 40px; }
+  .back { text-decoration: none; color: var(--muted); }
+  .back:hover { color: var(--cobalt); }
+  .head { margin: 48px 0 40px; }
+  .file { color: var(--cobalt); display: flex; gap: 14px; align-items: center; }
+  .stamp { color: var(--clay); border: 1px solid var(--clay); padding: 2px 8px; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; }
+  h1 { font: 300 clamp(56px, 9vw, 128px)/.92 var(--serif); letter-spacing: -.03em; margin: 14px 0 18px; }
+  .tagline { font: 400 clamp(22px, 2.4vw, 30px)/1.3 var(--serif); margin: 0; max-width: 760px; color: var(--muted); }
+
+  .facts { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); margin: 0; }
+  .facts > div { padding: 16px 18px 16px 0; }
+  .facts .wide { grid-column: 1 / -1; border-top: 1px solid var(--rule); }
+  .facts dt { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 4px; }
+  .facts dd { margin: 0; }
+
+  .conf { margin-top: 28px; border-left: 3px solid var(--clay); padding: 6px 0 6px 18px; }
+  .conf strong { color: var(--clay); text-transform: uppercase; font-size: 12px; letter-spacing: .08em; }
+  .conf p { margin: 4px 0 0; color: var(--muted); }
+
+  .label { color: var(--cobalt); font-weight: 400; text-transform: uppercase; letter-spacing: .08em; font-size: 12px; margin: 0 0 14px; }
+  .tour { margin-top: 64px; }
+  .tour-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 26px; }
+  .frame { margin: 0 0 26px; border: 1px solid var(--ink); background: var(--paper-2); overflow: hidden; }
+  .frame img, .frame video { width: 100%; }
+  .frame iframe { width: 100%; aspect-ratio: 16 / 9; border: 0; display: block; }
+  .frame.blur img { filter: blur(6px) saturate(.7); }
+  .chrome { display: flex; gap: 6px; padding: 10px 12px; border-bottom: 1px solid var(--ink); }
+  .chrome span { width: 9px; height: 9px; border: 1px solid var(--ink); border-radius: 50%; }
+
+  .body { margin-top: 72px; display: grid; gap: 56px; max-width: 860px; }
+  .body section { display: grid; grid-template-columns: 180px 1fr; gap: 28px; border-top: 1px solid var(--rule); padding-top: 18px; }
+  .big { font: 400 22px/1.45 var(--serif); margin: 0; }
+  .list { margin: 0; padding: 0; list-style: none; counter-reset: n; }
+  .list li { counter-increment: n; position: relative; padding: 0 0 14px 40px; margin-bottom: 14px; border-bottom: 1px dashed var(--rule); }
+  .list li::before { content: counter(n, decimal-leading-zero); position: absolute; left: 0; font: 13px var(--mono); color: var(--cobalt); top: 3px; }
+  .dec li::before { color: var(--clay); }
+  .ai-note p { margin: 0; padding: 16px 18px; background: var(--ink); color: var(--paper); }
+
+  .next { display: flex; flex-direction: column; gap: 6px; margin-top: 100px; padding: 28px 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); text-decoration: none; }
+  .next-title { font: 300 clamp(36px, 5vw, 64px)/1 var(--serif); transition: color .2s; }
+  .next:hover .next-title { color: var(--cobalt); }
+
+  @media (max-width: 760px) {
+    .facts { grid-template-columns: 1fr; }
+    .body section { grid-template-columns: 1fr; gap: 8px; }
+    .big { font-size: 19px; }
+  }
+</style>
