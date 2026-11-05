@@ -6,6 +6,12 @@ const p: Project = {
   domains: ['game'],
   period: '2026',
   stack: ['Python', 'Ren’Py', 'Narrative design'],
+  video: { fr: '/video/priority-fr.mp4', en: '/video/priority-en.mp4' },
+  images: [
+    { src: '/img/priority-title.png', alt: { fr: 'Écran titre de Priority', en: 'Priority title screen' } },
+    { src: '/img/priority-values.png', alt: { fr: 'Classement des sept valeurs', en: 'Ranking the seven values' } },
+    { src: '/img/priority-dilemma.jpg', alt: { fr: 'Premier dilemme et ses six réponses', en: 'First dilemma and its six answers' } },
+  ],
   fr: {
     title: 'Priority',
     tagline: 'Un jeu narratif où vos actes contredisent parfois vos valeurs.',
